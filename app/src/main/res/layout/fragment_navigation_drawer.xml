@@ -1,5 +1,24 @@
-<ListView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" android:choiceMode="singleChoice"
+    android:layout_height="match_parent"
+    android:orientation="vertical" android:choiceMode="singleChoice"
     android:divider="@android:color/transparent" android:dividerHeight="0dp"
-    android:background="#cccc" tools:context=".NavigationDrawerFragment" />
+    android:background="#cccc" tools:context=".NavigationDrawerFragment"
+    android:weightSum="100"
+    android:gravity="center">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/profile_imageview"
+        android:background="@color/material_blue_grey_800"
+        android:layout_gravity="top"
+        android:layout_weight="30"/>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/options_listview"
+        android:layout_gravity="bottom"
+        android:layout_weight="60" />
+</LinearLayout>

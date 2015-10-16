@@ -1,4 +1,4 @@
-package com.modular.mancha.housemodule11;
+package com.modular.mancha.housemodule;
 
 import android.app.Application;
 import android.test.ApplicationTestCase;
