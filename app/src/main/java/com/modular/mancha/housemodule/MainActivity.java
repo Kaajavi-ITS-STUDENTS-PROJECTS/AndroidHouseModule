@@ -6,6 +6,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.os.Bundle;
+import android.support.v7.internal.widget.AdapterViewCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -18,6 +19,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
 import java.util.ArrayList;
+
+import static android.support.v7.internal.widget.AdapterViewCompat.*;
 
 
 public class MainActivity extends ActionBarActivity
@@ -157,26 +160,27 @@ public class MainActivity extends ActionBarActivity
             options_view.setAdapter(adapter);
 
             options_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                    switch (position){
+                    switch (position) {
                         case 0:
-                            if(options_view.getItemAtPosition(0).equals(getActivity().getString(R.string.settings))){
-                                webview.loadUrl(ip+"/admin");
-                                options.set(0,getActivity().getString(R.string.home));
-                                ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1, options);
+                            if (options_view.getItemAtPosition(0).equals(getActivity().getString(R.string.settings))) {
+                                webview.loadUrl(ip + "/admin");
+                                options.set(0, getActivity().getString(R.string.home));
+                                ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, options);
                                 options_view.setAdapter(adapter);
-                            }
-                            else{
+                            } else {
                                 webview.loadUrl(ip);
-                                options.set(0,getActivity().getString(R.string.settings));
-                                ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1, options);
+                                options.set(0, getActivity().getString(R.string.settings));
+                                ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, options);
                                 options_view.setAdapter(adapter);
                             }
 
                             break;
                         case 1:
-                            webview.loadUrl(ip+"/logout");
+                            webview.loadUrl(ip + "/logout");
                             break;
                         default:
                             break;
@@ -184,6 +188,18 @@ public class MainActivity extends ActionBarActivity
                     drawerLayout.closeDrawers();
                 }
             });
+
+            options_view.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getActivity(),SettingsActivity.class);
+                    startActivity(intent);
+                    return false;
+                }
+
+            });
+
             webview = (WebView) rootView.findViewById(R.id.webview);
             webview.getSettings().setJavaScriptEnabled(true);
             webview.loadUrl(ip);
