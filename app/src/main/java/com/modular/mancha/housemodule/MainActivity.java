@@ -1,6 +1,7 @@
 package com.modular.mancha.housemodule;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,6 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.ListView;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity
@@ -41,15 +47,26 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
     }
 
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+    }
+
+    PlaceholderFragment ph = new PlaceholderFragment();
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                .replace(R.id.container, ph.newInstance(position + 1))
                 .commit();
     }
 
+
+    public void goToAdmin(){
+        ph.goToAdmin();
+    }
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
@@ -84,7 +101,7 @@ public class MainActivity extends ActionBarActivity
         // automatically handle clicks on the Home/Up button, so long
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
+        ph.goToAdmin();
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_settings) {
             return true;
@@ -123,14 +140,58 @@ public class MainActivity extends ActionBarActivity
         public PlaceholderFragment() {
         }
 
+        WebView webview;
+        String ip ="http://192.168.2.254:8000";
+        DrawerLayout drawerLayout;
+        ListView options_view;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-            WebView webview = (WebView) rootView.findViewById(R.id.webview);
+            final ArrayList options = new ArrayList();
+            options.add(getActivity().getString(R.string.settings));
+            options.add(getActivity().getString(R.string.logout));
+            options_view = (ListView) getActivity().findViewById(R.id.options_listview);
+            drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+            ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1, options);
+            options_view.setAdapter(adapter);
+
+            options_view.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    switch (position){
+                        case 0:
+                            if(options_view.getItemAtPosition(0).equals(getActivity().getString(R.string.settings))){
+                                webview.loadUrl(ip+"/admin");
+                                options.set(0,getActivity().getString(R.string.home));
+                                ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1, options);
+                                options_view.setAdapter(adapter);
+                            }
+                            else{
+                                webview.loadUrl(ip);
+                                options.set(0,getActivity().getString(R.string.settings));
+                                ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1, options);
+                                options_view.setAdapter(adapter);
+                            }
+
+                            break;
+                        case 1:
+                            webview.loadUrl(ip+"/logout");
+                            break;
+                        default:
+                            break;
+                    }
+                    drawerLayout.closeDrawers();
+                }
+            });
+            webview = (WebView) rootView.findViewById(R.id.webview);
             webview.getSettings().setJavaScriptEnabled(true);
-            webview.loadUrl("http://192.168.2.254:8000");
+            webview.loadUrl(ip);
             return rootView;
+        }
+
+        public void goToAdmin(){
+            webview.loadUrl(ip+"/admin");
         }
 
         @Override

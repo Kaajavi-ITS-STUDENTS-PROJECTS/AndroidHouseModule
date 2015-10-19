@@ -15,6 +15,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.Toast;
@@ -92,19 +93,7 @@ public class NavigationDrawerFragment extends Fragment {
                 R.layout.fragment_navigation_drawer, container, false);
 
         /////
-        ArrayList options = new ArrayList();
-        options.add("Settings");
-        options.add("Logout");
-        ListView options_view = (ListView) view.findViewById(R.id.options_listview);
-        ArrayAdapter adapter = new ArrayAdapter<String>(view.getContext(),android.R.layout.simple_list_item_1, options);
-        options_view.setAdapter(adapter);
-
-        options_view.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                
-            }
-        });
+        mDrawerListView = (ListView)view.findViewById(R.id.options_listview);
 /////
         return view;
     }
