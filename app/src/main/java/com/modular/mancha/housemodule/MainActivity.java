@@ -17,6 +17,7 @@ import android.webkit.WebView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -34,7 +35,7 @@ public class MainActivity extends ActionBarActivity
     /**
      */
     private CharSequence mTitle;
-
+    private String ip = "http://192.168.2.254:8000";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,6 +44,9 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
+        if(getIntent().getStringExtra("ip")!= null){
+           ip =  getIntent().getStringExtra("ip");
+        }
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
@@ -62,14 +66,13 @@ public class MainActivity extends ActionBarActivity
         // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
-                .replace(R.id.container, ph.newInstance(position + 1))
+                .replace(R.id.container, ph.newInstance(position+1,ip))
                 .commit();
+
     }
 
 
-    public void goToAdmin(){
-        ph.goToAdmin();
-    }
+
     public void onSectionAttached(int number) {
         switch (number) {
             case 1:
@@ -115,7 +118,9 @@ public class MainActivity extends ActionBarActivity
 
 
 
-
+    public String getIp(){
+        return ip;
+    }
 
 
     /**
@@ -127,16 +132,18 @@ public class MainActivity extends ActionBarActivity
          * fragment.
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
+        private static String ip_fragment;
 
         /**
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(int position, String ip) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putInt(ARG_SECTION_NUMBER, position);
             fragment.setArguments(args);
+            ip_fragment = ip;
             return fragment;
         }
 
@@ -144,13 +151,13 @@ public class MainActivity extends ActionBarActivity
         }
 
         WebView webview;
-        String ip ="http://192.168.2.254:8000";
         DrawerLayout drawerLayout;
         ListView options_view;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
             final ArrayList options = new ArrayList();
             options.add(getActivity().getString(R.string.settings));
             options.add(getActivity().getString(R.string.logout));
@@ -167,12 +174,12 @@ public class MainActivity extends ActionBarActivity
                     switch (position) {
                         case 0:
                             if (options_view.getItemAtPosition(0).equals(getActivity().getString(R.string.settings))) {
-                                webview.loadUrl(ip + "/admin");
+                                webview.loadUrl(ip_fragment + "/admin");
                                 options.set(0, getActivity().getString(R.string.home));
                                 ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, options);
                                 options_view.setAdapter(adapter);
                             } else {
-                                webview.loadUrl(ip);
+                                webview.loadUrl(ip_fragment);
                                 options.set(0, getActivity().getString(R.string.settings));
                                 ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, options);
                                 options_view.setAdapter(adapter);
@@ -180,7 +187,7 @@ public class MainActivity extends ActionBarActivity
 
                             break;
                         case 1:
-                            webview.loadUrl(ip + "/logout");
+                            webview.loadUrl(ip_fragment + "/logout");
                             break;
                         default:
                             break;
@@ -202,12 +209,12 @@ public class MainActivity extends ActionBarActivity
 
             webview = (WebView) rootView.findViewById(R.id.webview);
             webview.getSettings().setJavaScriptEnabled(true);
-            webview.loadUrl(ip);
+            webview.loadUrl(ip_fragment);
             return rootView;
         }
 
         public void goToAdmin(){
-            webview.loadUrl(ip+"/admin");
+            webview.loadUrl(ip_fragment+"/admin");
         }
 
         @Override

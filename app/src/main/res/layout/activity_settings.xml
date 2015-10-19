@@ -23,15 +23,14 @@
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="IP:"
                 android:id="@+id/textView"
-                android:layout_weight="50"/>
+                android:layout_weight="30"/>
 
             <EditText
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:inputType="number"
-                android:ems="10"
-                android:id="@+id/editText"
-                android:layout_weight="50"/>
+                android:id="@+id/edittext_settings_ip"
+                android:layout_weight="70" />
+
         </LinearLayout>
     </LinearLayout>
 

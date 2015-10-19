@@ -7,6 +7,8 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.TextView;
 
 
 public class SettingsActivity extends ActionBarActivity {
@@ -16,10 +18,12 @@ public class SettingsActivity extends ActionBarActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         Button save = (Button) findViewById(R.id.save_settings_button);
+        final EditText ip_label = (EditText) findViewById(R.id.edittext_settings_ip);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                intent.putExtra("ip",ip_label.getText().toString());
                 startActivity(intent);
             }
         });
