@@ -7,5 +7,12 @@
     android:id="@+id/webview"
     tools:context=".MainActivity$PlaceholderFragment">
 
-
+    <ProgressBar
+        android:id="@+id/progress"
+        style="@style/Widget.AppCompat.Spinner"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:layout_gravity="center"
+        android:visibility="invisible">
+    </ProgressBar>
 </WebView>

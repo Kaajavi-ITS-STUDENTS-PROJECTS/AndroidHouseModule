@@ -3,7 +3,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical" android:choiceMode="singleChoice"
     android:divider="@android:color/transparent" android:dividerHeight="0dp"
-    android:background="#cccc" tools:context=".NavigationDrawerFragment"
+    android:background="@color/switch_thumb_normal_material_light" tools:context=".NavigationDrawerFragment"
     android:weightSum="100"
     android:gravity="center">
 
@@ -20,5 +20,6 @@
         android:layout_height="wrap_content"
         android:id="@+id/options_listview"
         android:layout_gravity="bottom"
-        android:layout_weight="60" />
+        android:layout_weight="60"
+        android:textColor="#303030"/>
 </LinearLayout>

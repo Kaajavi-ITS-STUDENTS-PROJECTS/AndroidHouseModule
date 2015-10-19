@@ -2,6 +2,7 @@ package com.modular.mancha.housemodule;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -14,9 +15,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ public class MainActivity extends ActionBarActivity
     /**
      */
     private CharSequence mTitle;
-    private String ip = "http://192.168.2.254:8000";
+    private String ip = "http://www.facebook.com";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -156,7 +159,7 @@ public class MainActivity extends ActionBarActivity
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+            final View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
             final ArrayList options = new ArrayList();
             options.add(getActivity().getString(R.string.settings));
@@ -200,7 +203,7 @@ public class MainActivity extends ActionBarActivity
 
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-                    Intent intent = new Intent(getActivity(),SettingsActivity.class);
+                    Intent intent = new Intent(getActivity(), SettingsActivity.class);
                     startActivity(intent);
                     return false;
                 }
@@ -210,6 +213,18 @@ public class MainActivity extends ActionBarActivity
             webview = (WebView) rootView.findViewById(R.id.webview);
             webview.getSettings().setJavaScriptEnabled(true);
             webview.loadUrl(ip_fragment);
+            webview.setWebViewClient(new WebViewClient() {
+                public void onPageStarted(WebView view, String url, Bitmap favicon){
+                    ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
+                    pb.setVisibility(view.VISIBLE);
+                }
+
+                public void onPageFinished(WebView view, String url){
+                    ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
+                    pb.setVisibility(view.INVISIBLE);
+                }
+
+            });
             return rootView;
         }
 
