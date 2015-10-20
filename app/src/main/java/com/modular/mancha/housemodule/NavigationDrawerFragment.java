@@ -74,7 +74,6 @@ public class NavigationDrawerFragment extends Fragment {
             mCurrentSelectedPosition = savedInstanceState.getInt(STATE_SELECTED_POSITION);
             mFromSavedInstanceState = true;
         }
-
         // Select either the default item (0) or the last selected item.
         selectItem(mCurrentSelectedPosition);
     }
@@ -117,12 +116,6 @@ public class NavigationDrawerFragment extends Fragment {
         // set up the drawer's list view with items and click listener
 
 
-
-        // If the user hasn't 'learned' about the drawer, open it to introduce them to the drawer,
-        // per the navigation drawer design guidelines.
-        if (!mUserLearnedDrawer && !mFromSavedInstanceState) {
-            mDrawerLayout.openDrawer(mFragmentContainerView);
-        }
 
 
         mDrawerLayout.setDrawerListener(mDrawerToggle);

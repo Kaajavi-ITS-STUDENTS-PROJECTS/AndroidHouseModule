@@ -1,7 +1,9 @@
 package com.modular.mancha.housemodule;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
@@ -38,7 +40,7 @@ public class MainActivity extends ActionBarActivity
     /**
      */
     private CharSequence mTitle;
-    private String ip = "http://www.facebook.com";
+    private String ip ;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,14 +49,12 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment = (NavigationDrawerFragment)
                 getSupportFragmentManager().findFragmentById(R.id.navigation_drawer);
         mTitle = getTitle();
-        if(getIntent().getStringExtra("ip")!= null){
-           ip =  getIntent().getStringExtra("ip");
-        }
 
         // Set up the drawer.
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
     }
 
 
@@ -67,6 +67,9 @@ public class MainActivity extends ActionBarActivity
     @Override
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
+        SharedPreferences sharedPref = getSharedPreferences("IPs", MODE_PRIVATE);
+        ip = sharedPref.getString("host_ip","http://www.facebook.com");
+
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
                 .replace(R.id.container, ph.newInstance(position+1,ip))
@@ -166,6 +169,7 @@ public class MainActivity extends ActionBarActivity
             options.add(getActivity().getString(R.string.logout));
             options_view = (ListView) getActivity().findViewById(R.id.options_listview);
             drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+
             ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(),android.R.layout.simple_list_item_1, options);
             options_view.setAdapter(adapter);
 
@@ -204,8 +208,10 @@ public class MainActivity extends ActionBarActivity
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(getActivity(), SettingsActivity.class);
-                    startActivity(intent);
-                    return false;
+                    intent.putExtra("ip",ip_fragment);
+                    startActivityForResult(intent,1);
+                    drawerLayout.closeDrawers();
+                    return true;
                 }
 
             });
@@ -219,6 +225,12 @@ public class MainActivity extends ActionBarActivity
                     pb.setVisibility(view.VISIBLE);
                 }
 
+                @Override
+                public void onLoadResource(WebView view, String url) {
+                    ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
+                    pb.setVisibility(view.INVISIBLE);
+                }
+
                 public void onPageFinished(WebView view, String url){
                     ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
                     pb.setVisibility(view.INVISIBLE);
@@ -226,6 +238,18 @@ public class MainActivity extends ActionBarActivity
 
             });
             return rootView;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            ip_fragment =  data.getStringExtra("ip");
+            Context context = getActivity();
+            SharedPreferences sharedPref = context.getSharedPreferences("IPs",context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("host_ip", ip_fragment);
+            editor.commit();
+            webview.loadUrl(ip_fragment);
         }
 
         public void goToAdmin(){

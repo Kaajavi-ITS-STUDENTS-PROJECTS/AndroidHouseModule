@@ -13,18 +13,22 @@ import android.widget.TextView;
 
 public class SettingsActivity extends ActionBarActivity {
 
+    String ip;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
         Button save = (Button) findViewById(R.id.save_settings_button);
+        ip = getIntent().getStringExtra("ip");
         final EditText ip_label = (EditText) findViewById(R.id.edittext_settings_ip);
+        ip_label.setText(ip);
         save.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
                 intent.putExtra("ip",ip_label.getText().toString());
-                startActivity(intent);
+                setResult(RESULT_OK, intent);
+                finish();
             }
         });
     }
