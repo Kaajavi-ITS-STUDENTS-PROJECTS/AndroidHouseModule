@@ -22,6 +22,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -55,6 +56,8 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
+
+
     }
 
 
@@ -68,7 +71,7 @@ public class MainActivity extends ActionBarActivity
     public void onNavigationDrawerItemSelected(int position) {
         // update the main content by replacing fragments
         SharedPreferences sharedPref = getSharedPreferences("IPs", MODE_PRIVATE);
-        ip = sharedPref.getString("host_ip","http://www.facebook.com");
+        ip = sharedPref.getString("host_ip","http://www.UPSSS.com");
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction()
@@ -78,6 +81,9 @@ public class MainActivity extends ActionBarActivity
     }
 
 
+    public String getIP(){
+        return ip;
+    }
 
     public void onSectionAttached(int number) {
         switch (number) {
@@ -236,6 +242,15 @@ public class MainActivity extends ActionBarActivity
                     pb.setVisibility(view.INVISIBLE);
                 }
 
+                @Override
+                public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
+                    super.onReceivedError(view, errorCode, description, failingUrl);
+                    ErrorFragment error = new ErrorFragment();
+                    FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+                    fragmentManager.beginTransaction()
+                            .replace(R.id.container, error.newInstance(description, ip_fragment))
+                            .commit();
+                }
             });
             return rootView;
         }
@@ -264,4 +279,56 @@ public class MainActivity extends ActionBarActivity
         }
     }
 
+
+
+    public static class ErrorFragment extends Fragment {
+
+        private static String descripcion;
+        private static String ip_fragment;
+        public static ErrorFragment newInstance(String desc, String ip) {
+            ErrorFragment fragment = new ErrorFragment();
+            descripcion = desc;
+            ip_fragment = ip;
+            return fragment;
+        }
+
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                                 Bundle savedInstanceState) {
+            final View rootView = inflater.inflate(R.layout.fragment_error, container, false);
+            TextView txb = (TextView)rootView.findViewById(R.id.txb_error);
+            txb.setText(descripcion);
+            ListView options_view = (ListView) getActivity().findViewById(R.id.options_listview);
+            options_view.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+
+                @Override
+                public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+                    Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                    intent.putExtra("ip", ip_fragment);
+                    startActivityForResult(intent, 1);
+                    return true;
+                }
+
+            });
+
+            return rootView;
+        }
+
+        @Override
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            ip_fragment =  data.getStringExtra("ip");
+            Context context = getActivity();
+            SharedPreferences sharedPref = context.getSharedPreferences("IPs", context.MODE_PRIVATE);
+            SharedPreferences.Editor editor = sharedPref.edit();
+            editor.putString("host_ip", ip_fragment);
+            editor.commit();
+            PlaceholderFragment ph = new PlaceholderFragment();
+            FragmentManager fragmentManager = getActivity().getSupportFragmentManager();
+            fragmentManager.beginTransaction()
+                    .replace(R.id.container, ph.newInstance(1,ip_fragment))
+                    .commit();
+        }
+
+    }
 }

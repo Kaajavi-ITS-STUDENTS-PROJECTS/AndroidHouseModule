@@ -1,8 +1,11 @@
 package com.modular.mancha.housemodule;
 
 import android.app.Activity;
+import android.graphics.Bitmap;
+import android.os.AsyncTask;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.ActionBarDrawerToggle;
+import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.content.SharedPreferences;
@@ -15,11 +18,27 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
+import org.apache.http.HttpResponse;
+import org.apache.http.HttpStatus;
+import org.apache.http.StatusLine;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URL;
 import java.util.ArrayList;
 
 /**
@@ -57,6 +76,7 @@ public class NavigationDrawerFragment extends Fragment {
     private int mCurrentSelectedPosition = 0;
     private boolean mFromSavedInstanceState;
     private boolean mUserLearnedDrawer;
+    private String UserName;
 
     public NavigationDrawerFragment() {
     }
@@ -93,6 +113,12 @@ public class NavigationDrawerFragment extends Fragment {
 
         /////
         mDrawerListView = (ListView)view.findViewById(R.id.options_listview);
+        WebView webview = (WebView) view.findViewById(R.id.webview_profile);
+        webview.getSettings().setJavaScriptEnabled(true);
+        SharedPreferences sharedPref = getActivity().getSharedPreferences("IPs", getActivity().MODE_PRIVATE);
+        String ip = sharedPref.getString("host_ip","http://www.UPSSS.com");
+        webview.loadUrl(ip+"/getcurrentuser");
+
 /////
         return view;
     }
@@ -125,6 +151,7 @@ public class NavigationDrawerFragment extends Fragment {
         mCurrentSelectedPosition = position;
         if (mDrawerListView != null) {
             mDrawerListView.setItemChecked(position, true);
+
         }
         if (mDrawerLayout != null) {
             mDrawerLayout.closeDrawer(mFragmentContainerView);
@@ -200,5 +227,25 @@ public class NavigationDrawerFragment extends Fragment {
          * Called when an item in the navigation drawer is selected.
          */
         void onNavigationDrawerItemSelected(int position);
+    }
+
+    public class GetUsername extends AsyncTask<String, Void, String> {
+
+
+        @Override
+        protected String doInBackground(String... ip) {
+            String result = "";
+
+
+            return result;
+        }
+
+        protected void onPostExecute(String result) {
+            Toast toast = Toast.makeText(getActivity(), result, Toast.LENGTH_LONG);
+            toast.show();
+        }
+
+
+
     }
 }

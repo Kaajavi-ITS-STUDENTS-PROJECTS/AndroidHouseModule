@@ -21,4 +21,6 @@
     <string name="settings_title">Super Secret Advanced Settings</string>
     <string name="settings_button">Save</string>
     <string name="settings_txb_ip">IP:</string>
+    <string name="title_error">Se encontro el siguiente error al conectarse con el servidor</string>
+    <string name="contactese_error">Contactese con su proveedor de House Module</string>
 </resources>
