@@ -229,23 +229,5 @@ public class NavigationDrawerFragment extends Fragment {
         void onNavigationDrawerItemSelected(int position);
     }
 
-    public class GetUsername extends AsyncTask<String, Void, String> {
 
-
-        @Override
-        protected String doInBackground(String... ip) {
-            String result = "";
-
-
-            return result;
-        }
-
-        protected void onPostExecute(String result) {
-            Toast toast = Toast.makeText(getActivity(), result, Toast.LENGTH_LONG);
-            toast.show();
-        }
-
-
-
-    }
 }

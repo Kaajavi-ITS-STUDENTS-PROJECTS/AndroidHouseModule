@@ -20,6 +20,7 @@ import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
@@ -162,9 +163,20 @@ public class MainActivity extends ActionBarActivity
         public PlaceholderFragment() {
         }
 
+
+        public void reload_profile(){
+            WebView webprofile = (WebView) getActivity().findViewById(R.id.webview_profile);
+            webprofile.getSettings().setJavaScriptEnabled(true);
+            SharedPreferences sharedPref = getActivity().getSharedPreferences("IPs", getActivity().MODE_PRIVATE);
+            String ip = sharedPref.getString("host_ip","http://www.UPSSS.com");
+            webprofile.loadUrl(ip+"/getcurrentuser");
+        }
+
+
         WebView webview;
         DrawerLayout drawerLayout;
         ListView options_view;
+        Button alarm_button;
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
@@ -172,6 +184,7 @@ public class MainActivity extends ActionBarActivity
 
             final ArrayList options = new ArrayList();
             options.add(getActivity().getString(R.string.settings));
+            options.add(getActivity().getString(R.string.rules));
             options.add(getActivity().getString(R.string.logout));
             options_view = (ListView) getActivity().findViewById(R.id.options_listview);
             drawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
@@ -200,11 +213,18 @@ public class MainActivity extends ActionBarActivity
 
                             break;
                         case 1:
+                            webview.loadUrl(ip_fragment + "/autoluz");
+                            options.set(0, getActivity().getString(R.string.home));
+                            ArrayAdapter adapter = new ArrayAdapter<String>(getActivity().getApplicationContext(), android.R.layout.simple_list_item_1, options);
+                            options_view.setAdapter(adapter);
+                            break;
+                        case 2:
                             webview.loadUrl(ip_fragment + "/logout");
                             break;
                         default:
                             break;
                     }
+
                     drawerLayout.closeDrawers();
                 }
             });
@@ -214,19 +234,25 @@ public class MainActivity extends ActionBarActivity
                 @Override
                 public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
                     Intent intent = new Intent(getActivity(), SettingsActivity.class);
-                    intent.putExtra("ip",ip_fragment);
-                    startActivityForResult(intent,1);
+                    intent.putExtra("ip", ip_fragment);
+                    startActivityForResult(intent, 1);
                     drawerLayout.closeDrawers();
                     return true;
                 }
 
             });
 
+
+
+
+
+            //WEBVIEW PRINCIPAL
+
             webview = (WebView) rootView.findViewById(R.id.webview);
             webview.getSettings().setJavaScriptEnabled(true);
             webview.loadUrl(ip_fragment);
             webview.setWebViewClient(new WebViewClient() {
-                public void onPageStarted(WebView view, String url, Bitmap favicon){
+                public void onPageStarted(WebView view, String url, Bitmap favicon) {
                     ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
                     pb.setVisibility(view.VISIBLE);
                 }
@@ -235,9 +261,10 @@ public class MainActivity extends ActionBarActivity
                 public void onLoadResource(WebView view, String url) {
                     ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
                     pb.setVisibility(view.INVISIBLE);
+                    reload_profile();
                 }
 
-                public void onPageFinished(WebView view, String url){
+                public void onPageFinished(WebView view, String url) {
                     ProgressBar pb = (ProgressBar) rootView.findViewById(R.id.progress);
                     pb.setVisibility(view.INVISIBLE);
                 }
@@ -252,23 +279,36 @@ public class MainActivity extends ActionBarActivity
                             .commit();
                 }
             });
+
+
+            //ALARMA LISTVIEW
+            alarm_button = (Button) getActivity().findViewById(R.id.alarm_button);
+
+            alarm_button.setOnClickListener(new OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    webview.loadUrl("javascript:(function(){document.getElementById('alarmita').click();})()");
+
+                }
+            });
+
             return rootView;
         }
 
         @Override
         public void onActivityResult(int requestCode, int resultCode, Intent data) {
             super.onActivityResult(requestCode, resultCode, data);
-            ip_fragment =  data.getStringExtra("ip");
+            ip_fragment = data.getStringExtra("ip");
             Context context = getActivity();
-            SharedPreferences sharedPref = context.getSharedPreferences("IPs",context.MODE_PRIVATE);
+            SharedPreferences sharedPref = context.getSharedPreferences("IPs", context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPref.edit();
             editor.putString("host_ip", ip_fragment);
             editor.commit();
             webview.loadUrl(ip_fragment);
         }
 
-        public void goToAdmin(){
-            webview.loadUrl(ip_fragment+"/admin");
+        public void goToAdmin() {
+            webview.loadUrl(ip_fragment + "/admin");
         }
 
         @Override
